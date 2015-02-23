@@ -2,26 +2,28 @@
 
 angular.module('rockataryApp')
   .controller('MainCtrl', function ($scope, $http, socket) {
-    $scope.awesomeThings = [];
+    $scope.gigs = [];
 
-    $http.get('/api/things').success(function(awesomeThings) {
-      $scope.awesomeThings = awesomeThings;
-      socket.syncUpdates('thing', $scope.awesomeThings);
+    $http.get('/api/gigs').success(function(gigs) {
+      $scope.gigs = gigs;
+      socket.syncUpdates('gig', $scope.gigs);
     });
 
-    $scope.addThing = function() {
-      if($scope.newThing === '') {
+    $scope.addGig = function() {
+      if($scope.newTitle === '') {
         return;
       }
-      $http.post('/api/things', { name: $scope.newThing });
-      $scope.newThing = '';
+      $http.post('/api/gigs', { title: $scope.newTitle,
+                                location: $scope.newLoc });
+      $scope.newTitle = '';
+      $scope.newLoc = '';
     };
 
-    $scope.deleteThing = function(thing) {
-      $http.delete('/api/things/' + thing._id);
+    $scope.deleteGig = function(gig) {
+      $http.delete('/api/gigs/' + gig._id);
     };
 
     $scope.$on('$destroy', function () {
-      socket.unsyncUpdates('thing');
+      socket.unsyncUpdates('gig');
     });
   });

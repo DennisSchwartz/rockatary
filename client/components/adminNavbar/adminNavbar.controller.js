@@ -1,16 +1,16 @@
 'use strict';
 
 angular.module('rockataryApp')
-  .controller('NavbarCtrl', function ($scope, $location, Auth) {
+  .controller('AdminNavbarCtrl', function ($scope, $location, Auth) {
     $scope.menu = [{
       'title': 'Home',
-      'link': '/'
+      'link': '/admin'
+    },{
+      'title': 'Booking',
+      'link': '/admin/booking/gigs'
     },{
       'title': 'News',
-      'link': '/news'
-    },{
-      'title': 'Media',
-      'link': '/media'
+      'link': '/admin/news'
     }];
 
     $scope.isCollapsed = true;

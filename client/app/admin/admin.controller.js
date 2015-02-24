@@ -1,10 +1,11 @@
 'use strict';
 
 angular.module('rockataryApp')
-  .controller('AdminCtrl', function ($scope, $http, Auth, User, socket) {
+  .controller('AdminCtrl', function ($scope, $http, Auth, User, socket, $filter) {
 
     $scope.gigs = [];
     $scope.posts = [];
+    $scope.activeGig = false;
 
     $http.get('/api/gigs').success(function(gigs) {
       $scope.gigs = gigs;
@@ -16,6 +17,15 @@ angular.module('rockataryApp')
       socket.syncUpdates('newsItem', $scope.posts);
     });
 
+    $scope.toggleGigDetail = function(gig) {
+      if ($scope.activeGig) {
+        $scope.activeGig = false;
+        console.log("Active gig unset!");
+      } else {
+        $scope.activeGig = $filter('filter')($scope.gigs, function (d) {return d._id === gig._id;})[0];
+        console.log("Active gig set to " + $scope.activeGig.title);
+      }
+    };
 
     // Use the User $resource to fetch all users
     $scope.users = User.query();

@@ -8,6 +8,7 @@
 var Thing = require('../api/thing/thing.model');
 var User = require('../api/user/user.model');
 var Gig = require('../api/gig/gig.model');
+var Post = require('../api/post/post.model');
 
 Thing.find({}).remove(function() {
   Thing.create({
@@ -67,4 +68,17 @@ Gig.find({}).remove(function() {
       console.log('finished loading test gigs');
     }
   );
+});
+
+
+Post.find({}).remove(function() {
+  Post.create({
+    title: 'Neue Website',
+    body: 'Hey Hallo! Wir haben eine neue Website! Freaky Freaky aaaay?!',
+    date: '2015-03-01'
+  }, {
+    title: 'Rockatary am Ring!',
+    body: 'Wir freuen und euch mitteilen zu dürfen, wir spielen dieses Jahr am Ring! YEAH!',
+    date: '2015-03-13'
+  });
 });

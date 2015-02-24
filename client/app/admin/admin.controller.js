@@ -1,7 +1,21 @@
 'use strict';
 
 angular.module('rockataryApp')
-  .controller('AdminCtrl', function ($scope, $http, Auth, User) {
+  .controller('AdminCtrl', function ($scope, $http, Auth, User, socket) {
+
+    $scope.gigs = [];
+    $scope.posts = [];
+
+    $http.get('/api/gigs').success(function(gigs) {
+      $scope.gigs = gigs;
+      socket.syncUpdates('gig', $scope.gigs);
+    });
+
+    $http.get('/api/posts').success(function(posts) {
+      $scope.posts = posts;
+      socket.syncUpdates('newsItem', $scope.posts);
+    });
+
 
     // Use the User $resource to fetch all users
     $scope.users = User.query();

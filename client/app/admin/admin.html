@@ -1,12 +1,35 @@
 <div ng-include="'components/navbar/navbar.html'"></div>
-
 <div class="container">
-  <p>The delete user and user index api routes are restricted to users with the 'admin' role.</p>
-  <ul class="list-group">
-    <li class="list-group-item" ng-repeat="user in users">
-        <strong>{{user.name}}</strong><br>
-        <span class="text-muted">{{user.email}}</span>
-        <a ng-click="delete(user)" class="trash"><span class="glyphicon glyphicon-trash pull-right"></span></a>
-    </li>
-  </ul>
+	<div class="row clearfix">
+		<div class="jumbotron col-sm-6 text-center">
+			<!-- News -->
+			<div class="panel-heading">
+				<h3 class="panel-title pull-left">Aktuelle News:</h3> <a ui-sref=".add" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-plus"></span></a>
+			</div>
+			<div class="panel-body">
+				<ul class="list-group">
+					<li class="list-group-item" ng-repeat="post in posts">
+						<strong>{{post.title}}</strong><br>
+						<span class="text-muted">{{post.body}}</span>
+						<!-- <a ng-click="delete(gig)" class="trash"><span class="glyphicon glyphicon-trash pull-right"></span></a> -->
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="jumbotron col-sm-6">
+			<!-- Gigs -->
+			<div class="panel-heading">
+				<h3 class="panel-title pull-left">Die nächsten Gigs:</h3> <a ui-sref=".add" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-plus"></span></a>
+			</div>
+			<div class="panel-body">
+				<ul class="list-group" style="overflow: scroll; height:200px;" >
+					<li class="list-group-item" ng-repeat="gig in gigs" >
+						<strong>{{gig.date | date:'dd.MM.yyyy'}} - {{gig.title}}</strong><br>
+						<span class="text-muted">{{gig.location}}</span>
+						<!-- <a ng-click="delete(gig)" class="trash"><span class="glyphicon glyphicon-trash pull-right"></span></a> -->
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
 </div>

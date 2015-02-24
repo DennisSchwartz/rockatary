@@ -13,7 +13,7 @@
       <div class="pa-sidebar">
         <ul class="nav nav-list nav-stacked">
           <!--ng-class="{ active: $state.includes('gigs.list') }"-->
-          <li ng-repeat="item in menu" ng-class"{active: isActive(item.link)}"><a ui-sref="{{item.link}}">{{item.title}}</a></li>
+          <li ng-repeat="item in menu" ng-class"{active: isActive(item.link)}"><a ui-href="{{item.link}}">{{item.title}}</a></li>
         </ul>
       </div>
     </div>

@@ -6,6 +6,7 @@ angular.module('rockataryApp')
     $scope.gigs = [];
     $scope.posts = [];
     $scope.activeGig = false;
+    $scope.orderProp = '-date';
 
     $http.get('/api/gigs').success(function(gigs) {
       $scope.gigs = gigs;

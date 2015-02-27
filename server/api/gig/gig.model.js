@@ -9,7 +9,8 @@ var GigSchema = new Schema({
   	location: String,
   	status: Boolean,
   	flyer: String,
-  	contact: Date
+  	contact: Date,
+  	comment: String
 });
 
 module.exports = mongoose.model('Gig', GigSchema);

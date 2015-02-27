@@ -57,13 +57,15 @@ Gig.find({}).remove(function() {
     location: 'Kupferdächle',
     status: 'true',
     flyer: 'superrock-06062015-flyer.jpg',
-    contact: '2015-02-15'
+    contact: '2015-02-15',
+    comment: 'Test Comment.'
   }, {
     title: 'Weird Goth Rock Night',
     date: '2015-04-23',
     location: 'Sakrema',
     status: 'true',
-    contact: '2014-12-03'
+    contact: '2014-12-03',
+    comment: 'Testasdfasd'
   }, function() {
       console.log('finished loading test gigs');
     }

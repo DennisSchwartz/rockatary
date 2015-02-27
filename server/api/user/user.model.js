@@ -56,10 +56,10 @@ UserSchema
 
 // Validate empty email
 UserSchema
-  .path('email')
-  .validate(function(email) {
-    return email.length;
-  }, 'Email cannot be blank');
+  .path('name')
+  .validate(function(name) {
+    return name.length;
+  }, 'Name cannot be blank');
 
 // Validate empty password
 UserSchema

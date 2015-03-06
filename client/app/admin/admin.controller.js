@@ -1,12 +1,15 @@
 'use strict';
 
 angular.module('rockataryApp')
-  .controller('AdminCtrl', function ($scope, $http, Auth, User, socket, $filter) {
+  .controller('AdminCtrl', function ($scope, $http, Auth, User, socket, $filter, FileUploader) {
 
     $scope.gigs = [];
     $scope.posts = [];
     $scope.activeGig = false;
     $scope.orderProp = '-date';
+    $scope.uploader = new FileUploader({
+            url: 'api/files/upload/'
+        });
 
     $http.get('/api/gigs').success(function(gigs) {
       $scope.gigs = gigs;

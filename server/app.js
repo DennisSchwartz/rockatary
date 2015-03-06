@@ -10,9 +10,25 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 var express = require('express');
 var mongoose = require('mongoose');
 var config = require('./config/environment');
+// My own Imports // DS
+var Grid = require('gridfs-stream');
 
 // Connect to database
+Grid.mongo = mongoose.mongo;
 mongoose.connect(config.mongo.uri, config.mongo.options);
+
+mongoose.connection.on('connected', function() {
+  	//set Grid
+	var gfs = Grid(mongoose.connection.db);
+    app.set('gridfs', gfs);
+    console.log('Connected GridFS!!');
+    //console.log(gfs);
+    // all set!
+  })
+
+mongoose.connection.on('error',function (err) {
+  console.log('Mongoose default connection error: ' + err);
+});
 
 // Populate DB with sample data
 if(config.seedDB) { require('./config/seed'); }

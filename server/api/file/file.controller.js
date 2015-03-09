@@ -9,6 +9,8 @@ var streamifier = require('streamifier');
 var os = require('os');
 var path = require('path');
 var fs = require("fs");
+var uid = require('uid2');
+var multer  = require('multer')
 
 // Get list of files
 exports.index = function(req, res) {
@@ -21,7 +23,8 @@ exports.index = function(req, res) {
 // Get a single file
 exports.show = function(req, res) {
 
-  var readstream = gridfs.createReadStream({
+  var gfs = req.app.get('gridfs');
+  var readstream = gfs.createReadStream({
     _id: req.params.id
   });
   req.on('error', function(err) {
@@ -31,12 +34,6 @@ exports.show = function(req, res) {
     res.send(500, err);
   });
   readstream.pipe(res);
-
- // File.findById(req.params.id, function (err, file) {
- //   if(err) { return handleError(res, err); }
- //   if(!file) { return res.send(404); }
- //   return res.json(file);
- // });
 };
 
 // Creates a new file in the DB.
@@ -44,38 +41,60 @@ exports.create = function(req, res) {
   var is;
   var outs;
   var type;
+  // Create new busboy with headers from request
   var busboy = new Busboy({ headers: req.headers});
-  console.log('In file upload function! (create)');
   var gfs = req.app.get('gridfs');
 
+
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  // %%%%% ----> Use Busboy/Multiparty here!!
+  // %%%%% ----> Use Busboy here!!
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  console.log('Trying Busboy:');
+
   busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
       console.log('File [' + fieldname + ']: filename: ' + filename + ', encoding: ' + encoding + ', mimetype: ' + mimetype);
-      type = mimetype;
-      var extension = type.split(/[\/ ]+/).pop();
-      console.log('This is the filetype:');
-      console.log(extension);
-      // %%%% SAVE TO DISK
-      var saveTo = path.join(os.tmpDir(), path.basename(fieldname));
-      file.pipe(fs.createWriteStream(saveTo));
 
+      // %%%% Check filetype
+      var type = mimetype.split(/[\/ ]+/);
+      if ( type[1] !== 'pdf' &&  type[0] !== 'image') {
+        // if file is not a pdf or image file -> reject http request
+        console.log('Not an acceptable filetype!');
+        res.status(400).json({ message: "This is not an accepted file type. Please make sure you are uploading image or pdf files."})
+      }
+
+      // %%%% Save tempfile to disk
+      var saveTo = path.join(os.tmpDir(), path.basename(uid(22) + '.' + type[1]));
+      file.pipe(fs.createWriteStream(saveTo));
       file.on('data', function(data) {
         console.log('File [' + fieldname + '] got ' + data.length + ' bytes');
       });
+
+      // %%%% After file was written to disk
       file.on('end', function() {
         console.log('File [' + fieldname + '] Finished');
-        outs = gfs.createWriteStream({ filename: 'test.png'});
-        // %%% HOWTO STREAM File???
+        outs = gfs.createWriteStream({ filename: filename});
+        // %%% Read file from disk and pipe to DB
         fs.createReadStream(saveTo).pipe(outs);
         outs.on('close', function (file) {
-          console.log("Written to somewhere!");
-          console.log("ID:" + file._id);
+          // %%%% After save to DB, delete from tmp.
+          console.log("Written " + file.filename + " to Database with id: "+ file._id + "!");
+          //Return file id to add to gig
+          res.status(201).json({ fileID: file._id });
+          fs.unlink(saveTo);
+          console.log('Temp file deleted!');
         })
       });
+    });
+
+  busboy.on('field', function(fieldname, val, fieldnameTruncated, valTruncated) {
+    console.log('Field [' + fieldname + ']: value: ' + inspect(val));
   });
+
+  busboy.on('finish', function() {
+    console.log('Done parsing form!');
+    //res.writeHead(200, { Connection: 'close', status: 'success', fileID: res.fileID });
+    //res.status(201).json({ fileID: fileID });
+  });
+
 
   req.pipe(busboy);
 

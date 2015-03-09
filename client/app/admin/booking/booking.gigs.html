@@ -13,7 +13,15 @@
 						</tr>
 					</tbody>
 				</table>
+				Drop File:
+				<div ng-file-drop ng-file-select ng-model="files" class="drop-box"
+					drag-over-class="dragover" ng-multiple="true" allow-dir="true"
+				accept=".jpg,.png,.pdf,.txt">Drop Images or PDFs files here</div>
+				<div ng-no-file-drop>File Drag/Drop is not supported for this browser</div>
 			</div>
+			<ul>
+				<li ng-repeat="f in files" style="font:smaller">{{f.name}}</li>
+			</ul>
 		</div>
 	</div>
 	<div class="col-sm-5">
@@ -25,9 +33,9 @@
 			<div class="form-group">
 				<input type="text" class="form-control" ng-model="query" placeholder="Search">
 				<!-- <select class="form-control" ng-model="orderProp">
-								<option value="-terminpos">Neueste Zuerst</option>
-								<option value="terminpos">Älteste Zuerst</option>
-								<option value="event2">Name</option>
+										<option value="-terminpos">Neueste Zuerst</option>
+										<option value="terminpos">Älteste Zuerst</option>
+										<option value="event2">Name</option>
 				</select> -->
 			</div>
 			<ul class="list-unstyled">

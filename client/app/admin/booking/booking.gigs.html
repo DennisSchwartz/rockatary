@@ -1,54 +1,148 @@
-<div class="row clearfix">
+<!-- FORM FOR NEW EVENTS! -->
+<div class="row clearfix" ng-controller="BookingCtrl">
 	<div class="col-sm-5">
-		<div ng-show="activeGig" class="panel panel-primary">
-			<div class="panel-heading">
-				<p class="panel-title">Details<button type="button" class="close" ng-click="toggleGigDetail()">&times;</button></p>
-			</div>
-			<div class="panel-body">
-				<table class="table table-striped table-hover ">
-					<tbody>
-						<tr ng-repeat="(key, value) in activeGig">
-							<td>{{ key }}</td>
-							<td>{{ value }}</td>
-						</tr>
-					</tbody>
-				</table>
-				Drop File:
-				<div ng-file-drop ng-file-select ng-model="files" class="drop-box"
-					drag-over-class="dragover" ng-multiple="true" allow-dir="true"
-				accept=".jpg,.png,.pdf,.txt">Drop Images or PDFs files here</div>
-				<div ng-no-file-drop>File Drag/Drop is not supported for this browser</div>
-			</div>
-			<ul>
-				<li ng-repeat="f in files" style="font:smaller">{{f.name}}</li>
-			</ul>
+		<div ng-show="true" class="panel panel-primary"> <!-- newEvent -->
+		<div class="panel-heading">
+			<p class="panel-title">Neuer {{ event.type }}
+				<button type="button" class="close" ng-click="toggleEventForm()">&times;</button></p>
 		</div>
-	</div>
-	<div class="col-sm-5">
-		<div ng-show="!activeGig" class="panel panel-primary">
-			<div class="panel-heading">
-				<p class="panel-title">Aktuelle Gigs</p>
-			</div>
-			<div class="panel-body"> <!-- style="max-height: 450px;overflow-y: scroll;" -->
-			<div class="form-group">
-				<input type="text" class="form-control" ng-model="query" placeholder="Search">
-				<!-- <select class="form-control" ng-model="orderProp">
-										<option value="-terminpos">Neueste Zuerst</option>
-										<option value="terminpos">Älteste Zuerst</option>
-										<option value="event2">Name</option>
-				</select> -->
-			</div>
-			<ul class="list-unstyled">
-				<li ng-repeat="gig in gigs | filter:query | orderBy:orderProp">
-					<div class="panel panel-default">
-						<div class="panel-body">
-							<a ng-click="toggleGigDetail(gig)">{{gig.date | date:'dd.MM.yyyy'}} - {{gig.title}}</a>
-							<br>
-							<span class="text-muted">{{gig.location}}</span>
+		<div class="panel-body">
+			<form name="addGig" class="form-horizontal" ng-submit="createEvent()">
+				<fieldset>
+					<!-- COMMON FORMGROUP -->
+					<div class="row">
+						<label for="event.type" class="control-label col-lg-2">Art:</label>
+						<div class="col-lg-4">
+							<input type="radio" ng-model="event.type" value="Gig" /> - Gig
+							<input type="radio" ng-model="event.type" value="privater Termin"/> - Privater Termin
 						</div>
 					</div>
-				</li>
-			</ul>
+					<div class="form-group">
+						<div class="row">
+							<label for="date" class="control-label col-lg-2">Datum:</label>
+							<div class="col-lg-4">
+								<input type="date" class="form-control" name="date" ng-model="event.date" placeholder="yyyy-MM-dd" min="2008-01-01" max="2100-12-31" required />
+							</div>
+						</div>
+						<div class="row" ng-show="event.type == 'privater Termin'">
+							<label for="endDate" class="control-label col-lg-2">End-Datum:</label>
+							<div class="col-lg-4">
+								<input type="date" class="form-control" name="endDate" ng-model="event.endDate" placeholder="yyyy-MM-dd" min="2008-01-01" max="2100-12-31" />
+							</div>
+						</div>
+						<div class="row">
+							<label for="title" class="control-label col-lg-2">Titel:</label>
+							<div class="col-lg-4">
+								<input type="text" class="form-control" name="title" ng-model="event.title" required />
+							</div>
+						</div>
+					</div>
+					<!-- GIG FORMGROUP -->
+					<div class="form-group" ng-show="event.type == 'Gig'">
+						<label for="loc" class="control-label col-lg-2">Location:</label>
+						<div class="col-lg-4">
+							<input type="text" class="form-control" name="loc" ng-model="event.loc" />
+						</div>
+						<label for="status" class="control-label col-lg-2">Status:</label>
+						<div class="col-lg-4">
+							<select class="form-control" id="status" ng-model="status">
+								<option>Angefragt</option>
+								<option>Gebucht</option>
+							</select>
+						</div>
+						<label for="contact" class="control-label col-lg-2">Kontakt:</label>
+						<div class="col-lg-4">
+							<input type="text" class="form-control" name="contact" ng-model="event.contact" />
+						</div>
+						<label for="notes" class="control-label col-lg-2">Info:</label>
+						<div class="col-lg-4">
+							<input type="text" class="form-control" name="notes" ng-model="event.notes" />
+						</div>
+					</div>
+					<!-- EVENT FORMGROUP -->
+					<div class="form-group" ng-show="event.type == 'privater Termin'">
+						<div class="row">
+							<label for="event.comment" class="control-label col-lg-2">Beschreibung:</label>
+							<div class="col-lg-4">
+								<input type="text" class="form-control" name="comment" ng-model="event.comment" />
+							</div>
+						</div>
+						<div class="row">
+							<label for="event.attend" class="control-label col-lg-2">Teilnehmer:</label>
+							<div class="col-lg-4">
+								<input type="checkbox" ng-model="event.attend.phil"/> Phil <br/>
+								<input type="checkbox" ng-model="event.attend.marcel"/> Marcel <br/>
+								<input type="checkbox" ng-model="event.attend.jens"/> Jens <br/>
+								<input type="checkbox" ng-model="event.attend.dennis"/> Dennis <br/>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-lg-10 col-lg-offset-2">
+							<button class="btn btn-default" ng-click="back()">Abbrechen</button>
+							<button type="submit" class="btn btn-primary">Speichern</button>
+						</div>
+					</div>
+				</fieldset>
+			</form>
 		</div>
 	</div>
+</div>
+<div class="alert-success calAlert" ng-show="alertMessage != undefined && alertMessage != ''">
+	<h4>{{alertMessage}}</h4>
+</div>
+</div>
+<div class="row clearfix">
+<div class="col-sm-5">
+	<div ng-show="activeGig" class="panel panel-primary">
+		<div class="panel-heading">
+			<p class="panel-title">Details<button type="button" class="close" ng-click="toggleGigDetail()">&times;</button></p>
+		</div>
+		<div class="panel-body">
+			<table class="table table-striped table-hover ">
+				<tbody>
+					<tr ng-repeat="(key, value) in activeGig">
+						<td>{{ key }}</td>
+						<td>{{ value }}</td>
+					</tr>
+				</tbody>
+			</table>
+			Drop File:
+			<div ng-file-drop ng-file-select ng-model="files" class="drop-box"
+				drag-over-class="dragover" ng-multiple="true" allow-dir="true"
+			accept=".jpg,.png,.pdf,.txt">Drop Images or PDFs files here</div>
+			<div ng-no-file-drop>File Drag/Drop is not supported for this browser</div>
+		</div>
+		<ul>
+			<li ng-repeat="f in files" style="font:smaller">{{f.name}}</li>
+		</ul>
+	</div>
+</div>
+<div class="col-sm-5">
+	<div ng-show="!activeGig" class="panel panel-primary">
+		<div class="panel-heading">
+			<p class="panel-title">Aktuelle Gigs</p>
+		</div>
+		<div class="panel-body"> <!-- style="max-height: 450px;overflow-y: scroll;" -->
+		<div class="form-group">
+			<input type="text" class="form-control" ng-model="query" placeholder="Search">
+			<!-- <select class="form-control" ng-model="orderProp">
+													<option value="-terminpos">Neueste Zuerst</option>
+													<option value="terminpos">Älteste Zuerst</option>
+													<option value="event2">Name</option>
+			</select> -->
+		</div>
+		<ul class="list-unstyled">
+			<li ng-repeat="gig in gigs | filter:query | orderBy:orderProp">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<a ng-click="toggleGigDetail(gig)">{{gig.date | date:'dd.MM.yyyy'}} - {{gig.title}}</a>
+						<br>
+						<span class="text-muted">{{gig.location}}</span>
+					</div>
+				</div>
+			</li>
+		</ul>
+	</div>
+</div>
 </div>

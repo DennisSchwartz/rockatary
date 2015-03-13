@@ -5,12 +5,10 @@ var shortId = require('shortid');
 var File = require('./file.model');
 var http = require('http'), inspect = require('util').inspect;
 var Busboy = require('busboy');
-var streamifier = require('streamifier');
 var os = require('os');
 var path = require('path');
 var fs = require("fs");
 var uid = require('uid2');
-var multer  = require('multer')
 
 // Get list of files
 exports.index = function(req, res) {

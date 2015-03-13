@@ -1,17 +1,20 @@
 'use strict';
 
 angular.module('rockataryApp')
-  .controller('AdminCtrl', function ($scope, $http, Auth, User, socket, $filter, $upload) {
+  .controller('AdminCtrl', function ($scope, $http, Auth, User, socket, $filter, $upload, $stateParams) {
 
     $scope.gigs = [];
     $scope.posts = [];
-    $scope.activeGig = false;
+    $scope.activeGig = $stateParams.activeGig;
+    $scope.alertMessage = $stateParams.alertMessage;
     $scope.orderProp = '-date';
     $scope.getCurrentUser = Auth.getCurrentUser;
     $scope.errorMessage = '';
     //$scope.uploader = new FileUploader({
     //        url: 'api/files/upload/'
     //    });
+
+    console.log($stateParams);
 
     $scope.$watch('files', function () {
         $scope.upload($scope.files);
@@ -37,7 +40,7 @@ angular.module('rockataryApp')
                     console.log('Gig: ' + angular.toJson($scope.activeGig));
 
                     //After upload, connect file to a gig
-                    $http.put('api/gigs/' + $scope.activeGig._id, $scope.activeGig).
+                    $http.put('api/gigs/' + $scope.activeGig._id, angular.toJson($scope.activeGig)).
                       success(function(data, status, headers, config) {
                         console.log('Data: ' + angular.toJson(data));
                       }).
